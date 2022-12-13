@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Module workflow Identity Import</title>
+    </properties>
+    <head>
+        <!-- Keywords example : "cms, authentication, cms, workflow, seo, collaborative, ..." 
+             Use the language of this xdoc -->
+        <meta name="keywords" content="workflow, identity" />
+    </head>
+    <body>
+        <section name="Module workflow Identity Import">
+            <!--
+            <p>
+                <img src="images/default.png" />
+            </p>
+            -->
+            <subsection name="Introduction">
+                <p>L'objectif de ce module est de proposer des tâches d'import vers IdentityStore.</p>
+         
+            </subsection>
+            <subsection name="Configuration">
+            	<p>Associer la tâche à une action, puis sélectionner les états cibles.</p>
+                
+            </subsection>
+            <subsection name="Usage">
+                <p>Cette tâche est automatique et doit être associée en tant que tel à un état.</p>
+            </subsection>
+        </section>
+    </body>
+</document>

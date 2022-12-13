@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">	
+
+    <bean id="workflow-identityimport.identityImportTaskType"
+        class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskIdentityImport"
+        p:titleI18nKey="module.workflow.identityimport.title"
+        p:beanName="workflow-identityimport.identityImportTask"
+        p:configBeanName="workflow-identityimport.identityImportTaskConfig"
+        p:configRequired="true"
+        p:formTaskRequired="false"
+        p:taskForAutomaticAction="true" />
+
+    <bean id="workflow-identityimport.identityImportTask" 
+    	class="fr.paris.lutece.plugins.workflow.modules.identityimport.task.IdentityImportTask" 
+    	scope="prototype" />
+    
+    <bean
+        id="workflow-identityimport.identityImportTaskConfigService"
+        class="fr.paris.lutece.plugins.workflow.modules.identityimport.service.IdentityImportTaskConfigService" 
+        p:taskConfigDAO-ref="workflow-identityimport.identityImportTaskConfigDAO" />
+    
+    <bean id="workflow-identityimport.identityImportTaskComponent" 
+    	class="fr.paris.lutece.plugins.workflow.modules.identityimport.web.IdentityImportTaskComponent"
+        p:taskType-ref="workflow-identityimport.identityImportTaskType"
+        p:taskConfigService-ref="workflow-identityimport.identityImportTaskConfigService"  />
+
+    <bean id="workflow-identityimport.identityImportTaskConfig"
+        class="fr.paris.lutece.plugins.workflow.modules.identityimport.task.IdentityImportTaskConfig"
+        scope="prototype" />
+
+    <bean id="workflow-identityimport.identityImportTaskConfigDAO"
+        class="fr.paris.lutece.plugins.workflow.modules.identityimport.task.IdentityImportTaskConfigDAO"
+        scope="prototype" />
+	
+</beans>

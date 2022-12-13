@@ -1,0 +1,68 @@
+
+<@box>
+    <@boxHeader title='#i18n{module.workflow.identityimport.identityimport.title}' boxTools=true />
+
+	<@boxBody>
+		<@formGroup labelKey='#i18n{module.workflow.identityimport.identityimport_config.workflow}' mandatory=true >		
+			<@select name='workflow' id='workflow' />
+    	</@formGroup>
+    	
+    	<@formGroup labelKey='#i18n{module.workflow.identityimport.identityimport_config.state1}' mandatory=true >		
+			<@select name='state1' id='state1' />
+		</@formGroup>
+    	
+    	<@formGroup labelKey='#i18n{module.workflow.identityimport.identityimport_config.state2}' mandatory=true >		
+			<@select name='state2' id='state2' />
+		</@formGroup>
+    	
+    	<@formGroup labelKey='#i18n{module.workflow.identityimport.identityimport_config.state3}' mandatory=true >		
+			<@select name='state3' id='state3' />
+		</@formGroup>
+    	
+   	</@boxBody>
+</@box>
+
+<script type="text/javascript">
+
+
+$(function() {
+
+  $('#workflow').change( function( ) {
+      for (var key in json.workflows) {
+      	if (json.workflows[key].id == $(this).val() ) {
+          	fillSelect( $('#state1'), json.workflows[key].states );
+          	fillSelect( $('#state2'), json.workflows[key].states );
+          	fillSelect( $('#state3'), json.workflows[key].states );          	
+        }
+      }
+  });
+
+  // init
+  fillSelect( $('#workflow'), json.workflows );
+  $('#workflow').change( );
+  
+  // init current values (if exists)
+  $('#workflow option[value=${workflow_id}]').attr('selected','selected').change();
+  $('#state1 option[value=${state_id_1}]').attr('selected','selected').change();
+  $('#state2 option[value=${state_id_2}]').attr('selected','selected').change();
+  $('#state3 option[value=${state_id_3}]').attr('selected','selected').change();
+});
+
+function addSelectOption( select, value, text) {
+	select.append($('<option>', {
+	    value: value,
+	    text: text
+	   }));
+}
+
+function fillSelect( select, subjson) {  
+  select.find('option').remove().end();
+  for (var key in subjson) {
+     addSelectOption( select, subjson[key].id, subjson[key].name);
+  }
+}
+
+
+json= ${json_workflow_states!}
+
+</script>
