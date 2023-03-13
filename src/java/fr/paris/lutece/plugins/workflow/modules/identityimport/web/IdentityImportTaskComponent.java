@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2022, City of Paris
+ * Copyright (c) 2002-2023, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,7 +67,6 @@ import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-
 public class IdentityImportTaskComponent extends NoFormTaskComponent
 {
     // MARKERS
@@ -86,7 +85,6 @@ public class IdentityImportTaskComponent extends NoFormTaskComponent
     // TEMPLATES
     private static final String TEMPLATE_TASK_IDENTITYIMPORT_CONFIG = "admin/plugins/workflow/modules/identityimport/identityimport_task_config.html";
 
-
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
@@ -101,7 +99,6 @@ public class IdentityImportTaskComponent extends NoFormTaskComponent
 
         // get config
         final IdentityImportTaskConfig config = findTaskConfig( task.getId( ) );
-
 
         // get enabled workflow list
         final ReferenceList workflowsRefList = WorkflowService.getInstance( ).getWorkflowsEnabled( user, locale );
@@ -128,12 +125,11 @@ public class IdentityImportTaskComponent extends NoFormTaskComponent
         model.put( MARK_STATE_ID_1, config.getIdState1( ) );
         model.put( MARK_STATE_ID_2, config.getIdState2( ) );
         model.put( MARK_STATE_ID_3, config.getIdState3( ) );
-        
+
         final HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_IDENTITYIMPORT_CONFIG, locale, model );
         return template.getHtml( );
     }
 
-    
     @Override
     public String validateConfig( ITaskConfig config, HttpServletRequest request )
     {
@@ -141,7 +137,7 @@ public class IdentityImportTaskComponent extends NoFormTaskComponent
         String state1 = request.getParameter( PARAM_STATE1 );
         String state2 = request.getParameter( PARAM_STATE2 );
         String state3 = request.getParameter( PARAM_STATE3 );
-        
+
         if ( StringUtils.isBlank( workflow ) || StringUtils.isBlank( state1 ) || StringUtils.isBlank( state2 ) || StringUtils.isBlank( state3 ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
@@ -189,7 +185,7 @@ public class IdentityImportTaskComponent extends NoFormTaskComponent
     /**
      * generate Json for cascade selects in template
      * 
-     * example : {"workflows":[{"id":1, "name":"dotation", "states":[{"id":12, "name":"statut11",  ...
+     * example : {"workflows":[{"id":1, "name":"dotation", "states":[{"id":12, "name":"statut11", ...
      * 
      * @param workflowsRefList
      * @param mapStates
@@ -225,6 +221,5 @@ public class IdentityImportTaskComponent extends NoFormTaskComponent
 
         return root.toPrettyString( );
     }
-    
-    
+
 }

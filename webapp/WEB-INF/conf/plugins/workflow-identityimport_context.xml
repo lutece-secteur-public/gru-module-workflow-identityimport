@@ -41,5 +41,18 @@
     <bean id="workflow-identityimport.identityImportTaskConfigDAO"
         class="fr.paris.lutece.plugins.workflow.modules.identityimport.task.IdentityImportTaskConfigDAO"
         scope="prototype" />
-	
+
+    <!-- IHttpTransportProvider declarations -->
+    <bean id="httpAccessTransport.v3" class="fr.paris.lutece.plugins.identitystore.v3.web.service.HttpAccessTransport" />
+
+    <bean id="restTransport.httpAccess.v3" class="fr.paris.lutece.plugins.identitystore.v3.web.rs.service.IdentityTransportRest">
+        <property name="IdentityStoreEndPoint">
+            <value>http://localhost:8080/rest/identitystore</value>
+        </property>
+    </bean>
+
+    <!-- IdentityService impl -->
+    <bean id="identityService.rest.httpAccess.v3" class="fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService">
+        <constructor-arg ref="restTransport.httpAccess.v3"/>
+    </bean>
 </beans>

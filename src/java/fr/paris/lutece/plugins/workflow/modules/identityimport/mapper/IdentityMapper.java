@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2022, City of Paris
+ * Copyright (c) 2002-2023, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,44 +31,35 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.identityimport.service;
+package fr.paris.lutece.plugins.workflow.modules.identityimport.mapper;
 
-import java.util.Locale;
+import fr.paris.lutece.plugins.identityimport.business.CandidateIdentity;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.CertifiedAttribute;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.Identity;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import fr.paris.lutece.api.user.User;
-import fr.paris.lutece.portal.service.workflow.WorkflowService;
-
-public class IdentityImportTaskService
+public class IdentityMapper
 {
 
-    private static final WorkflowService _workflowService = WorkflowService.getInstance( );
-    
-	/**
-	 * import identity
-	 * 
-	 * @param request
-	 * @param idState1
-	 * @param idState2
-	 * @param idState3
-	 * @param locale
-	 * @param user
-	 */
-	public static void importIdentity(HttpServletRequest request, int idState1, int idState2, int idState3, Locale locale,
-			User user) 
-	{
-		// 1. Call IDS import API
-		
-		// 2. if the result is : 
-		//      - "inserted" >> set state 1
-		//      - "identity selected" >> set state 2
-		//      - "duplicates suspicion" >> set state 3
-		
-		_workflowService.doProcessAction(idState2, null, idState3, null, request, locale, false, user);
-		
-		
-	}
+    public static Identity mapToIdentity( CandidateIdentity candidateIdentity )
+    {
+        Identity identity = new Identity( );
+        identity.setCustomerId( candidateIdentity.getCustomerId( ) );
+        identity.setConnectionId( candidateIdentity.getConnectionId( ) );
 
+        List<CertifiedAttribute> certifiedAttributes = candidateIdentity.getAttributes( ).stream( ).map( attribute -> {
+            CertifiedAttribute certifiedAttribute = new CertifiedAttribute( );
+            certifiedAttribute.setKey( attribute.getCode( ) );
+            certifiedAttribute.setValue( attribute.getValue( ) );
+            certifiedAttribute.setCertificationProcess( attribute.getCertProcess( ) );
+            certifiedAttribute.setCertificationDate( attribute.getCertDate( ) );
+            return certifiedAttribute;
+        } ).collect( Collectors.toList( ) );
 
+        identity.setAttributes( certifiedAttributes );
+
+        return identity;
+    }
 }

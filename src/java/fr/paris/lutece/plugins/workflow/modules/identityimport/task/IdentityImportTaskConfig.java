@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2022, City of Paris
+ * Copyright (c) 2002-2023, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,6 @@ public class IdentityImportTaskConfig extends TaskConfig
     private int _nIdState2;
     @NotNull
     private int _nIdState3;
-    
 
     /**
      * Returns the IdWorkflow
@@ -112,7 +111,7 @@ public class IdentityImportTaskConfig extends TaskConfig
     {
         _nIdState2 = nIdState;
     }
-    
+
     /**
      * Returns the IdState
      * 
