@@ -109,8 +109,8 @@ public class IdentityImportTask extends SimpleTask
                 if ( IdentityChangeStatus.CREATE_SUCCESS.equals( status ) || IdentityChangeStatus.UPDATE_SUCCESS.equals( status )
                         || IdentityChangeStatus.UPDATE_INCOMPLETE_SUCCESS.equals( status ) )
                 {
-                    //TODO service d'historique _resourceHistoryService
-                    candidateIdentity.setCustomerId(response.getCustomerId());
+                    // TODO service d'historique _resourceHistoryService
+                    candidateIdentity.setCustomerId( response.getCustomerId( ) );
                     bStatus = true;
                 }
                 else
