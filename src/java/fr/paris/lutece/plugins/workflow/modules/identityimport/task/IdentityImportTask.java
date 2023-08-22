@@ -59,7 +59,6 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import org.springframework.core.SpringProperties;
 
 public class IdentityImportTask extends SimpleTask
 {
@@ -105,7 +104,7 @@ public class IdentityImportTask extends SimpleTask
             {
                 final IdentityChangeResponse response = identityService.importIdentity( identityChangeRequest, candidateIdentity.getClientAppCode( ) );
                 final IdentityChangeStatus status = response.getStatus( );
-                candidateIdentity.setStatus( status.getLabel( ) );
+                candidateIdentity.setStatus( status.getMessage( ) );
                 if ( IdentityChangeStatus.CREATE_SUCCESS.equals( status ) || IdentityChangeStatus.UPDATE_SUCCESS.equals( status )
                         || IdentityChangeStatus.UPDATE_INCOMPLETE_SUCCESS.equals( status ) )
                 {
