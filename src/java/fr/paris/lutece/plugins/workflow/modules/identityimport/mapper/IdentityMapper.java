@@ -34,8 +34,8 @@
 package fr.paris.lutece.plugins.workflow.modules.identityimport.mapper;
 
 import fr.paris.lutece.plugins.identityimport.business.CandidateIdentity;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.CertifiedAttribute;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.Identity;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.AttributeDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,22 +43,22 @@ import java.util.stream.Collectors;
 public class IdentityMapper
 {
 
-    public static Identity mapToIdentity( CandidateIdentity candidateIdentity )
+    public static IdentityDto mapToIdentity( CandidateIdentity candidateIdentity )
     {
-        Identity identity = new Identity( );
+        IdentityDto identity = new IdentityDto( );
         identity.setCustomerId( candidateIdentity.getCustomerId( ) );
         identity.setConnectionId( candidateIdentity.getConnectionId( ) );
 
-        List<CertifiedAttribute> certifiedAttributes = candidateIdentity.getAttributes( ).stream( ).map( attribute -> {
-            CertifiedAttribute certifiedAttribute = new CertifiedAttribute( );
-            certifiedAttribute.setKey( attribute.getCode( ) );
-            certifiedAttribute.setValue( attribute.getValue( ) );
-            certifiedAttribute.setCertificationProcess( attribute.getCertProcess( ) );
-            certifiedAttribute.setCertificationDate( attribute.getCertDate( ) );
-            return certifiedAttribute;
+        List<AttributeDto> attributeDtos = candidateIdentity.getAttributes( ).stream( ).map( attribute -> {
+            AttributeDto attributeDto = new AttributeDto( );
+            attributeDto.setKey( attribute.getCode( ) );
+            attributeDto.setValue( attribute.getValue( ) );
+            attributeDto.setCertifier( attribute.getCertProcess( ) );
+            attributeDto.setCertificationDate( attribute.getCertDate( ) );
+            return attributeDto;
         } ).collect( Collectors.toList( ) );
 
-        identity.setAttributes( certifiedAttributes );
+        identity.setAttributes( attributeDtos );
 
         return identity;
     }

@@ -44,7 +44,7 @@ import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityAttribut
 import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityHome;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.AuthorType;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.Identity;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeStatus;
@@ -92,7 +92,7 @@ public class IdentityImportTask extends SimpleTask
              * 3. Otherwise return false (will set the state to "manual import")
              */
             final IdentityChangeRequest identityChangeRequest = new IdentityChangeRequest( );
-            final Identity identity = IdentityMapper.mapToIdentity( candidateIdentity );
+            final IdentityDto identity = IdentityMapper.mapToIdentity( candidateIdentity );
             identityChangeRequest.setIdentity( identity );
 
             final RequestAuthor requestAuthor = new RequestAuthor( );
