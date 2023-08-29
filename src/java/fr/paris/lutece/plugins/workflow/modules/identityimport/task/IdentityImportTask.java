@@ -33,21 +33,16 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.identityimport.task;
 
-import java.util.Locale;
-import java.util.Optional;
-
-import javax.servlet.http.HttpServletRequest;
-
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.identityimport.business.CandidateIdentity;
 import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityAttributeHome;
 import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityHome;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.AuthorType;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ResponseStatusType;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeStatus;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.plugins.workflow.modules.identityimport.mapper.IdentityMapper;
@@ -59,6 +54,10 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
+import java.util.Optional;
 
 public class IdentityImportTask extends SimpleTask
 {
@@ -103,10 +102,9 @@ public class IdentityImportTask extends SimpleTask
             try
             {
                 final IdentityChangeResponse response = identityService.importIdentity( identityChangeRequest, candidateIdentity.getClientAppCode( ) );
-                final IdentityChangeStatus status = response.getStatus( );
-                candidateIdentity.setStatus( status.getMessage( ) );
-                if ( IdentityChangeStatus.CREATE_SUCCESS.equals( status ) || IdentityChangeStatus.UPDATE_SUCCESS.equals( status )
-                        || IdentityChangeStatus.UPDATE_INCOMPLETE_SUCCESS.equals( status ) )
+                final ResponseStatusType status = response.getStatus( );
+                candidateIdentity.setStatus( status.getName( ) );
+                if ( ResponseStatusType.SUCCESS.equals( status ) || ResponseStatusType.INCOMPLETE_SUCCESS.equals( status ) )
                 {
                     // TODO service d'historique _resourceHistoryService
                     candidateIdentity.setCustomerId( response.getCustomerId( ) );
