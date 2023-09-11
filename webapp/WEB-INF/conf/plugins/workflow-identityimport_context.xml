@@ -45,7 +45,7 @@
     <!-- IHttpTransportProvider declarations -->
     <bean id="httpAccessTransport-ids" class="fr.paris.lutece.plugins.identitystore.v3.web.rs.service.HttpAccessTransport" >
         <property name="apiEndPointUrl">
-            <value>${identityimport.identitystore.ApiEndPointUrl}</value>
+            <value>${identityimport.identitystore.api.endpoint.url}</value>
         </property>
     </bean>
     <bean id="restTransport.identity.httpAccess" class="fr.paris.lutece.plugins.identitystore.v3.web.rs.service.IdentityTransportRest">
