@@ -40,7 +40,7 @@ import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityHome;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.AuthorType;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ResponseStatusType;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ResponseStatus;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService;
@@ -102,9 +102,9 @@ public class IdentityImportTask extends SimpleTask
             try
             {
                 final IdentityChangeResponse response = identityService.importIdentity( identityChangeRequest, candidateIdentity.getClientAppCode( ) );
-                final ResponseStatusType status = response.getStatus( );
+                final ResponseStatus status = response.getStatus( );
                 candidateIdentity.setStatus( status.getName( ) );
-                if ( ResponseStatusType.SUCCESS.equals( status ) || ResponseStatusType.INCOMPLETE_SUCCESS.equals( status ) )
+                if ( ResponseStatus.success( ).equals( status ) || ResponseStatus.incompleteSuccess( ).equals( status ) )
                 {
                     // TODO service d'historique _resourceHistoryService
                     candidateIdentity.setCustomerId( response.getCustomerId( ) );
