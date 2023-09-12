@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.workflow.modules.identityimport.task;
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.identityimport.business.CandidateIdentity;
 import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityAttributeHome;
+import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityHistory;
+import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityHistoryHome;
 import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityHome;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.AuthorType;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
@@ -103,10 +105,15 @@ public class IdentityImportTask extends SimpleTask
             {
                 final IdentityChangeResponse response = identityService.importIdentity( identityChangeRequest, candidateIdentity.getClientAppCode( ) );
                 final ResponseStatus status = response.getStatus( );
-                candidateIdentity.setStatus( status.getName( ) );
+                /* Complete workflow history with custom fields */
+                final CandidateIdentityHistory candidateIdentityHistory = new CandidateIdentityHistory();
+                candidateIdentityHistory.setWfResourceHistoryId(resourceHistory.getId());
+                candidateIdentityHistory.setStatus(status.getName());
+                candidateIdentityHistory.setComment(status.getMessage());
+                CandidateIdentityHistoryHome.insert(candidateIdentityHistory);
+                /* Process response */
                 if ( ResponseStatus.success( ).equals( status ) || ResponseStatus.incompleteSuccess( ).equals( status ) )
                 {
-                    // TODO service d'historique _resourceHistoryService
                     candidateIdentity.setCustomerId( response.getCustomerId( ) );
                     bStatus = true;
                 }
