@@ -186,13 +186,14 @@ public class IdentityImportTaskComponent extends NoFormTaskComponent
     public String getDisplayTaskInformation( int pNIdHistory, HttpServletRequest pRequest, Locale pLocale, ITask pTask )
     {
         /* Complete workflow history with custom fields */
-        final Optional<CandidateIdentityHistory> candidateIdentityHistory = CandidateIdentityHistoryHome.selectByWfHistory(pNIdHistory);
-        if(candidateIdentityHistory.isPresent()){
+        final Optional<CandidateIdentityHistory> candidateIdentityHistory = CandidateIdentityHistoryHome.selectByWfHistory( pNIdHistory );
+        if ( candidateIdentityHistory.isPresent( ) )
+        {
             final Map<String, Object> model = new HashMap<>( );
-            final CandidateIdentityHistory candidateIdentityHistory1 = candidateIdentityHistory.get();
-            model.put( MARK_STATUS, candidateIdentityHistory1.getStatus() );
-            model.put( MARK_COMMENT, candidateIdentityHistory1.getComment() );
-            HtmlTemplate template = AppTemplateService.getTemplate(TEMPLATE_CANDIDATE_IDENTITY_HISTORY, pLocale, model );
+            final CandidateIdentityHistory candidateIdentityHistory1 = candidateIdentityHistory.get( );
+            model.put( MARK_STATUS, candidateIdentityHistory1.getStatus( ) );
+            model.put( MARK_COMMENT, candidateIdentityHistory1.getComment( ) );
+            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CANDIDATE_IDENTITY_HISTORY, pLocale, model );
             return template.getHtml( );
         }
         return StringUtils.EMPTY;

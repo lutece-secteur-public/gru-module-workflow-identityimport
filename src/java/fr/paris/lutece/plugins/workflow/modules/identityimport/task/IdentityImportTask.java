@@ -106,11 +106,11 @@ public class IdentityImportTask extends SimpleTask
                 final IdentityChangeResponse response = identityService.importIdentity( identityChangeRequest, candidateIdentity.getClientAppCode( ) );
                 final ResponseStatus status = response.getStatus( );
                 /* Complete workflow history with custom fields */
-                final CandidateIdentityHistory candidateIdentityHistory = new CandidateIdentityHistory();
-                candidateIdentityHistory.setWfResourceHistoryId(resourceHistory.getId());
-                candidateIdentityHistory.setStatus(status.getName());
-                candidateIdentityHistory.setComment(status.getMessage());
-                CandidateIdentityHistoryHome.insert(candidateIdentityHistory);
+                final CandidateIdentityHistory candidateIdentityHistory = new CandidateIdentityHistory( );
+                candidateIdentityHistory.setWfResourceHistoryId( resourceHistory.getId( ) );
+                candidateIdentityHistory.setStatus( status.getName( ) );
+                candidateIdentityHistory.setComment( status.getMessage( ) );
+                CandidateIdentityHistoryHome.insert( candidateIdentityHistory );
                 /* Process response */
                 if ( ResponseStatus.success( ).equals( status ) || ResponseStatus.incompleteSuccess( ).equals( status ) )
                 {
