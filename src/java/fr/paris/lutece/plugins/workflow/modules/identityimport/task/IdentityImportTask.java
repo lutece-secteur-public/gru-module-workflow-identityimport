@@ -108,7 +108,7 @@ public class IdentityImportTask extends SimpleTask
                 /* Complete workflow history with custom fields */
                 final CandidateIdentityHistory candidateIdentityHistory = new CandidateIdentityHistory( );
                 candidateIdentityHistory.setWfResourceHistoryId( resourceHistory.getId( ) );
-                candidateIdentityHistory.setStatus( status.getName( ) );
+                candidateIdentityHistory.setStatus( status.getStatus( ).name( ) );
                 candidateIdentityHistory.setComment( status.getMessage( ) );
                 CandidateIdentityHistoryHome.insert( candidateIdentityHistory );
                 /* Process response */
