@@ -45,6 +45,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ResponseStatus;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.ResponseStatusFactory;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.plugins.workflow.modules.identityimport.mapper.IdentityMapper;
@@ -112,7 +113,7 @@ public class IdentityImportTask extends SimpleTask
                 candidateIdentityHistory.setComment( status.getMessage( ) );
                 CandidateIdentityHistoryHome.insert( candidateIdentityHistory );
                 /* Process response */
-                if ( ResponseStatus.success( ).equals( status ) || ResponseStatus.incompleteSuccess( ).equals( status ) )
+                if ( ResponseStatusFactory.success( ).equals( status ) || ResponseStatusFactory.incompleteSuccess( ).equals( status ) )
                 {
                     candidateIdentity.setCustomerId( response.getCustomerId( ) );
                     bStatus = true;
