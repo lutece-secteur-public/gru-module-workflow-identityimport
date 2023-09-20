@@ -100,11 +100,11 @@ public class IdentityImportTask extends SimpleTask
             final RequestAuthor requestAuthor = new RequestAuthor( );
             requestAuthor.setName( AppPropertiesService.getProperty( "identityimport_config.request.author" ) );
             requestAuthor.setType( AuthorType.application );
-            identityChangeRequest.setOrigin( requestAuthor );
 
             try
             {
-                final IdentityChangeResponse response = identityService.importIdentity( identityChangeRequest, candidateIdentity.getClientAppCode( ) );
+                final IdentityChangeResponse response = identityService.importIdentity( identityChangeRequest, candidateIdentity.getClientAppCode( ),
+                        requestAuthor );
                 final ResponseStatus status = response.getStatus( );
                 /* Complete workflow history with custom fields */
                 final CandidateIdentityHistory candidateIdentityHistory = new CandidateIdentityHistory( );
