@@ -55,8 +55,8 @@ import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceHistoryServ
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
@@ -65,13 +65,15 @@ import java.util.Optional;
 public class IdentityImportTask extends SimpleTask
 {
 
+    private final static Logger _logger = Logger.getLogger(IdentityImportTask.class);
+    
     // Constants
     private static final String TASK_TITLE = "module.workflow.identityimport.title";
 
     // Services
     private static final IResourceHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
 
-    private IdentityService identityService = SpringContextService.getBean( "identityService.rest.httpAccess.v3" );
+    private final IdentityService identityService = SpringContextService.getBean( "identityService.rest.httpAccess.v3" );
 
     @Override
     public boolean processTaskWithResult( int nIdResourceHistory, HttpServletRequest request, Locale locale, User user )
@@ -125,14 +127,14 @@ public class IdentityImportTask extends SimpleTask
             }
             catch( IdentityStoreException e )
             {
-                AppLogService.error( "A problem occured during import, candidate identity not imported (id : " + resourceHistory.getIdResource( ) + ")" );
+                _logger.error( "A problem occured during import, candidate identity not imported (id : " + resourceHistory.getIdResource( ) + ")" );
             }
 
             CandidateIdentityHome.update( candidateIdentity );
         }
         else
         {
-            AppLogService.error( "A problem occured during import, candidate identity not found (id : " + resourceHistory.getIdResource( ) + ")" );
+            _logger.error( "A problem occured during import, candidate identity not found (id : " + resourceHistory.getIdResource( ) + ")" );
             bStatus = false;
         }
         return bStatus;
