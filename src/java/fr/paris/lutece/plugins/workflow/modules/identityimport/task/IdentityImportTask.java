@@ -65,8 +65,8 @@ import java.util.Optional;
 public class IdentityImportTask extends SimpleTask
 {
 
-    private final static Logger _logger = Logger.getLogger(IdentityImportTask.class);
-    
+    private final static Logger _logger = Logger.getLogger( IdentityImportTask.class );
+
     // Constants
     private static final String TASK_TITLE = "module.workflow.identityimport.title";
 
