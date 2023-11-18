@@ -55,8 +55,8 @@ import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceHistoryServ
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
@@ -64,8 +64,6 @@ import java.util.Optional;
 
 public class IdentityImportTask extends SimpleTask
 {
-
-    private final static Logger _logger = Logger.getLogger( IdentityImportTask.class );
 
     // Constants
     private static final String TASK_TITLE = "module.workflow.identityimport.title";
@@ -127,14 +125,14 @@ public class IdentityImportTask extends SimpleTask
             }
             catch( IdentityStoreException e )
             {
-                _logger.error( "A problem occured during import, candidate identity not imported (id : " + resourceHistory.getIdResource( ) + ")" );
+                AppLogService.error( "A problem occured during import, candidate identity not imported (id : " + resourceHistory.getIdResource( ) + ")" );
             }
 
             CandidateIdentityHome.update( candidateIdentity );
         }
         else
         {
-            _logger.error( "A problem occured during import, candidate identity not found (id : " + resourceHistory.getIdResource( ) + ")" );
+            AppLogService.error( "A problem occured during import, candidate identity not found (id : " + resourceHistory.getIdResource( ) + ")" );
             bStatus = false;
         }
         return bStatus;
