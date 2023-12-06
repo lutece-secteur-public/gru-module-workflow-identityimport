@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.identityimport.task;
+package fr.paris.lutece.plugins.workflow.modules.identityimport.task.create;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.identityimport.business.CandidateIdentity;
@@ -49,6 +49,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.ResponseStatusFactor
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.plugins.workflow.modules.identityimport.mapper.IdentityMapper;
+import fr.paris.lutece.plugins.workflow.modules.identityimport.task.IdentityTask;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceHistoryService;
@@ -61,11 +62,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 import java.util.Optional;
 
-public class IdentityImportTask extends IdentityTask
+public class IdentityCreateTask extends IdentityTask
 {
 
     // Constants
-    private static final String TASK_TITLE = "module.workflow.identityimport.title";
+    private static final String TASK_TITLE = "module.workflow.identityimport.create.title";
 
     // Services
     private static final IResourceHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
@@ -95,14 +96,14 @@ public class IdentityImportTask extends IdentityTask
 
             try
             {
-                final IdentityChangeResponse response = identityService.importIdentity( identityChangeRequest, candidateIdentity.getClientAppCode( ),
+                final IdentityChangeResponse response = identityService.createIdentity( identityChangeRequest, candidateIdentity.getClientAppCode( ),
                         requestAuthor );
                 final ResponseStatus status = response.getStatus( );
                 /* Complete workflow history with custom fields */
                 final CandidateIdentityHistory candidateIdentityHistory = new CandidateIdentityHistory( );
                 candidateIdentityHistory.setWfResourceHistoryId( resourceHistory.getId( ) );
                 candidateIdentityHistory.setStatus( status.getType( ).name( ) );
-                candidateIdentityHistory.setComment( this.buildHistoryComment( "API Import identity", status ) );
+                candidateIdentityHistory.setComment( this.buildHistoryComment( "API Create identity", status ) );
                 CandidateIdentityHistoryHome.insert( candidateIdentityHistory );
                 /* Process response */
                 if ( ResponseStatusFactory.success( ).equals( status ) || ResponseStatusFactory.incompleteSuccess( ).equals( status ) )
@@ -113,14 +114,14 @@ public class IdentityImportTask extends IdentityTask
             }
             catch( IdentityStoreException e )
             {
-                AppLogService.error( "A problem occurred during import, candidate identity not imported (id : " + resourceHistory.getIdResource( ) + ")" );
+                AppLogService.error( "A problem occurred during creation, candidate identity not imported (id : " + resourceHistory.getIdResource( ) + ")" );
             }
 
             CandidateIdentityHome.update( candidateIdentity );
         }
         else
         {
-            AppLogService.error( "A problem occurred during import, candidate identity not found (id : " + resourceHistory.getIdResource( ) + ")" );
+            AppLogService.error( "A problem occurred during creation, candidate identity not found (id : " + resourceHistory.getIdResource( ) + ")" );
         }
         return bStatus;
     }

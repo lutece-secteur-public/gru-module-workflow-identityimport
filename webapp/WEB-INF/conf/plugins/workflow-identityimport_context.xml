@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-       http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context-3.0.xsd
-       http://www.springframework.org/schema/tx
-       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">	
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+    <!-- Import Identity -->
     <bean id="workflow-identityimport.identityImportTaskType"
-        class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
-        p:key="taskIdentityImport"
-        p:titleI18nKey="module.workflow.identityimport.title"
-        p:beanName="workflow-identityimport.identityImportTask"
-        p:configBeanName="workflow-identityimport.identityImportTaskConfig"
-        p:configRequired="true"
-        p:formTaskRequired="false"
-        p:taskForAutomaticAction="true" />
+          class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+          p:key="taskIdentityImport"
+          p:titleI18nKey="module.workflow.identityimport.title"
+          p:beanName="workflow-identityimport.identityImportTask"
+          p:configBeanName="workflow-identityimport.identityImportTaskConfig"
+          p:configRequired="true"
+          p:formTaskRequired="false"
+          p:taskForAutomaticAction="true" />
 
     <bean id="workflow-identityimport.identityImportTask" 
     	class="fr.paris.lutece.plugins.workflow.modules.identityimport.task.IdentityImportTask" 
@@ -41,6 +37,46 @@
     <bean id="workflow-identityimport.identityImportTaskConfigDAO"
         class="fr.paris.lutece.plugins.workflow.modules.identityimport.task.IdentityImportTaskConfigDAO"
         scope="prototype" />
+
+    <!-- Create Identity -->
+    <bean id="workflow-identityimport.identityCreateTaskType"
+          class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+          p:key="taskIdentityCreate"
+          p:titleI18nKey="module.workflow.identityimport.create.title"
+          p:beanName="workflow-identityimport.identityCreateTask"
+          p:configBeanName="workflow-identityimport.identityCreateTaskConfig"
+          p:configRequired="false"
+          p:formTaskRequired="false"
+          p:taskForAutomaticAction="false" />
+
+    <bean id="workflow-identityimport.identityCreateTask"
+          class="fr.paris.lutece.plugins.workflow.modules.identityimport.task.create.IdentityCreateTask"
+          scope="prototype" />
+
+    <bean id="workflow-identityimport.identityCreateTaskComponent"
+          class="fr.paris.lutece.plugins.workflow.modules.identityimport.web.IdentityCreateTaskComponent"
+          p:taskType-ref="workflow-identityimport.identityCreateTaskType"  />
+
+    <!-- Identify Identity -->
+    <bean id="workflow-identityimport.identityIdentifyTaskType"
+          class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+          p:key="taskIdentityIdentify"
+          p:titleI18nKey="module.workflow.identityimport.identify.title"
+          p:beanName="workflow-identityimport.identityIdentifyTask"
+          p:configBeanName="workflow-identityimport.identityIdentifyTaskConfig"
+          p:configRequired="false"
+          p:formTaskRequired="false"
+          p:taskForAutomaticAction="false" />
+
+    <bean id="workflow-identityimport.identityIdentifyTask"
+          class="fr.paris.lutece.plugins.workflow.modules.identityimport.task.identify.IdentityIdentifyTask"
+          scope="prototype" />
+
+    <bean id="workflow-identityimport.identityIdentifyTaskComponent"
+          class="fr.paris.lutece.plugins.workflow.modules.identityimport.web.IdentityIdentifyTaskComponent"
+          p:taskType-ref="workflow-identityimport.identityIdentifyTaskType"  />
+
+
 
     <!-- IHttpTransportProvider declarations -->
     <bean id="httpAccessTransport-ids" class="fr.paris.lutece.plugins.identitystore.v3.web.rs.service.HttpAccessTransport" >

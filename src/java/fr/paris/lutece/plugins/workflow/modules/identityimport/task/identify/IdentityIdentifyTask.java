@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.identityimport.task;
+package fr.paris.lutece.plugins.workflow.modules.identityimport.task.identify;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.identityimport.business.CandidateIdentity;
@@ -45,10 +45,13 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ResponseStatus;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.ResponseStatusFactory;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.plugins.workflow.modules.identityimport.mapper.IdentityMapper;
+import fr.paris.lutece.plugins.workflow.modules.identityimport.task.IdentityTask;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceHistoryService;
@@ -61,11 +64,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 import java.util.Optional;
 
-public class IdentityImportTask extends IdentityTask
+public class IdentityIdentifyTask extends IdentityTask
 {
 
     // Constants
-    private static final String TASK_TITLE = "module.workflow.identityimport.title";
+    private static final String TASK_TITLE = "module.workflow.identityimport.identify.title";
 
     // Services
     private static final IResourceHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
@@ -78,50 +81,55 @@ public class IdentityImportTask extends IdentityTask
         // Get resource id as parent ID for processing child actions
         final ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
         boolean bStatus = false;
-
-        final Optional<CandidateIdentity> optIdentity = CandidateIdentityHome.findByPrimaryKey( resourceHistory.getIdResource( ) );
-        if ( optIdentity.isPresent( ) )
+        final String selectedCustomerId = request.getParameter( Constants.PARAM_ID_CUSTOMER );
+        if ( selectedCustomerId != null )
         {
-            final CandidateIdentity candidateIdentity = optIdentity.get( );
-            candidateIdentity.setAttributes( CandidateIdentityAttributeHome.getCandidateIdentityAttributesList( candidateIdentity.getId( ) ) );
-
-            final IdentityChangeRequest identityChangeRequest = new IdentityChangeRequest( );
-            final IdentityDto identity = IdentityMapper.mapToIdentity( candidateIdentity );
-            identityChangeRequest.setIdentity( identity );
-
-            final RequestAuthor requestAuthor = new RequestAuthor( );
-            requestAuthor.setName( AppPropertiesService.getProperty( "identityimport_config.request.author" ) );
-            requestAuthor.setType( AuthorType.application );
-
-            try
+            final Optional<CandidateIdentity> optIdentity = CandidateIdentityHome.findByPrimaryKey( resourceHistory.getIdResource( ) );
+            if ( optIdentity.isPresent( ) )
             {
-                final IdentityChangeResponse response = identityService.importIdentity( identityChangeRequest, candidateIdentity.getClientAppCode( ),
-                        requestAuthor );
-                final ResponseStatus status = response.getStatus( );
-                /* Complete workflow history with custom fields */
-                final CandidateIdentityHistory candidateIdentityHistory = new CandidateIdentityHistory( );
-                candidateIdentityHistory.setWfResourceHistoryId( resourceHistory.getId( ) );
-                candidateIdentityHistory.setStatus( status.getType( ).name( ) );
-                candidateIdentityHistory.setComment( this.buildHistoryComment( "API Import identity", status ) );
-                CandidateIdentityHistoryHome.insert( candidateIdentityHistory );
-                /* Process response */
-                if ( ResponseStatusFactory.success( ).equals( status ) || ResponseStatusFactory.incompleteSuccess( ).equals( status ) )
+                final CandidateIdentity candidateIdentity = optIdentity.get( );
+                candidateIdentity.setAttributes( CandidateIdentityAttributeHome.getCandidateIdentityAttributesList( candidateIdentity.getId( ) ) );
+
+                final RequestAuthor requestAuthor = new RequestAuthor( );
+                requestAuthor.setName( AppPropertiesService.getProperty( "identityimport_config.request.author" ) );
+                requestAuthor.setType( AuthorType.application );
+
+                try
                 {
-                    candidateIdentity.setCustomerId( response.getCustomerId( ) );
-                    bStatus = true;
+                    final IdentitySearchResponse response = identityService.getIdentity( selectedCustomerId, candidateIdentity.getClientAppCode( ),
+                            requestAuthor );
+                    final ResponseStatus status = response.getStatus( );
+                    /* Complete workflow history with custom fields */
+                    final CandidateIdentityHistory candidateIdentityHistory = new CandidateIdentityHistory( );
+                    candidateIdentityHistory.setWfResourceHistoryId( resourceHistory.getId( ) );
+                    candidateIdentityHistory.setStatus( status.getType( ).name( ) );
+                    candidateIdentityHistory.setComment( this.buildHistoryComment( "Identité sélectionnée.\n\nAPI GET identity", status ) );
+                    CandidateIdentityHistoryHome.insert( candidateIdentityHistory );
+                    /* Process response */
+                    if ( ResponseStatusFactory.ok( ).equals( status ) )
+                    {
+                        candidateIdentity.setCustomerId( selectedCustomerId );
+                        bStatus = true;
+                    }
                 }
-            }
-            catch( IdentityStoreException e )
-            {
-                AppLogService.error( "A problem occurred during import, candidate identity not imported (id : " + resourceHistory.getIdResource( ) + ")" );
-            }
+                catch( IdentityStoreException e )
+                {
+                    AppLogService
+                            .error( "A problem occurred during creation, candidate identity not imported (id : " + resourceHistory.getIdResource( ) + ")" );
+                }
 
-            CandidateIdentityHome.update( candidateIdentity );
+                CandidateIdentityHome.update( candidateIdentity );
+            }
+            else
+            {
+                AppLogService.error( "A problem occurred during creation, candidate identity not found (id : " + resourceHistory.getIdResource( ) + ")" );
+            }
         }
         else
         {
-            AppLogService.error( "A problem occurred during import, candidate identity not found (id : " + resourceHistory.getIdResource( ) + ")" );
+            AppLogService.error( "A problem occurred during creation, no selected customer id (id : " + resourceHistory.getIdResource( ) + ")" );
         }
+
         return bStatus;
     }
 

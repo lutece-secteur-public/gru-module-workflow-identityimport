@@ -33,28 +33,13 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.identityimport.web;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
-
-import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityHistory;
-import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityHistoryHome;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityHistory;
+import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityHistoryHome;
 import fr.paris.lutece.plugins.workflow.modules.identityimport.task.IdentityImportTaskConfig;
-import fr.paris.lutece.plugins.workflow.web.task.NoFormTaskComponent;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -69,13 +54,22 @@ import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
-public class IdentityImportTaskComponent extends NoFormTaskComponent
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+public class IdentityImportTaskComponent extends IdentityTaskComponent
 {
     // MARKERS
     private static final String MARK_WORKFLOW_ID = "workflow_id";
-    private static final String MARK_STATUS = "status";
-    private static final String MARK_COMMENT = "comment";
     private static final String MARK_STATE_ID_1 = "state_id_1";
     private static final String MARK_STATE_ID_2 = "state_id_2";
     private static final String MARK_STATE_ID_3 = "state_id_3";
@@ -89,7 +83,6 @@ public class IdentityImportTaskComponent extends NoFormTaskComponent
 
     // TEMPLATES
     private static final String TEMPLATE_TASK_IDENTITYIMPORT_CONFIG = "admin/plugins/workflow/modules/identityimport/identityimport_task_config.html";
-    private static final String TEMPLATE_CANDIDATE_IDENTITY_HISTORY = "/admin/plugins/identityimport/candidate_identity_history.html";
 
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
@@ -180,23 +173,6 @@ public class IdentityImportTaskComponent extends NoFormTaskComponent
     {
         final IdentityImportTaskConfig config = this.getTaskConfigService( ).findByPrimaryKey( id );
         return config == null ? new IdentityImportTaskConfig( ) : config;
-    }
-
-    @Override
-    public String getDisplayTaskInformation( int pNIdHistory, HttpServletRequest pRequest, Locale pLocale, ITask pTask )
-    {
-        /* Complete workflow history with custom fields */
-        final Optional<CandidateIdentityHistory> candidateIdentityHistory = CandidateIdentityHistoryHome.selectByWfHistory( pNIdHistory );
-        if ( candidateIdentityHistory.isPresent( ) )
-        {
-            final Map<String, Object> model = new HashMap<>( );
-            final CandidateIdentityHistory candidateIdentityHistory1 = candidateIdentityHistory.get( );
-            model.put( MARK_STATUS, candidateIdentityHistory1.getStatus( ) );
-            model.put( MARK_COMMENT, candidateIdentityHistory1.getComment( ) );
-            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CANDIDATE_IDENTITY_HISTORY, pLocale, model );
-            return template.getHtml( );
-        }
-        return StringUtils.EMPTY;
     }
 
     /**
