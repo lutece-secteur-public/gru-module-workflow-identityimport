@@ -41,7 +41,8 @@ public abstract class IdentityTask extends SimpleTask
     protected String buildHistoryComment( final String header, final ResponseStatus status )
     {
         final StringBuilder message = new StringBuilder( header );
-        if(status.getMessage() != null) {
+        if ( status.getMessage( ) != null )
+        {
             message.append( "\n" ).append( status.getMessage( ) );
         }
         if ( status.getAttributeStatuses( ) != null && !status.getAttributeStatuses( ).isEmpty( ) )
