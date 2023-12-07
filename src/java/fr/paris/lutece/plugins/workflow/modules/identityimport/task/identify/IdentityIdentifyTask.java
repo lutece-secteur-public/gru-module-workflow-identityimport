@@ -39,18 +39,18 @@ import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityAttribut
 import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityHistory;
 import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityHistoryHome;
 import fr.paris.lutece.plugins.identityimport.business.CandidateIdentityHome;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.AttributeDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.AuthorType;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.IdentityDto;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.RequestAuthor;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ResponseStatus;
+import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ResponseStatusType;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.search.IdentitySearchResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.Constants;
-import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.ResponseStatusFactory;
 import fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
-import fr.paris.lutece.plugins.workflow.modules.identityimport.mapper.IdentityMapper;
 import fr.paris.lutece.plugins.workflow.modules.identityimport.task.IdentityTask;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
@@ -59,16 +59,23 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class IdentityIdentifyTask extends IdentityTask
 {
 
     // Constants
     private static final String TASK_TITLE = "module.workflow.identityimport.identify.title";
+    private static final String TIMESTAMP_FORMAT = "yyyy-mm-dd hh:mm:ss.SSS";
 
     // Services
     private static final IResourceHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
@@ -76,7 +83,7 @@ public class IdentityIdentifyTask extends IdentityTask
     private final IdentityService identityService = SpringContextService.getBean( "identityService.rest.httpAccess.v3" );
 
     @Override
-    public boolean processTaskWithResult( int nIdResourceHistory, HttpServletRequest request, Locale locale, User user )
+    public boolean processTaskWithResult( final int nIdResourceHistory, final HttpServletRequest request, final Locale locale, final User user )
     {
         // Get resource id as parent ID for processing child actions
         final ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
@@ -96,38 +103,77 @@ public class IdentityIdentifyTask extends IdentityTask
 
                 try
                 {
-                    final IdentitySearchResponse response = identityService.getIdentity( selectedCustomerId, candidateIdentity.getClientAppCode( ),
-                            requestAuthor );
-                    final ResponseStatus status = response.getStatus( );
+                    ResponseStatus status;
+                    String header;
+                    /* If override attribute -> update identity before identifying */
+                    if ( request.getParameterMap( ).entrySet( ).stream( ).anyMatch( entry -> entry.getKey( ).startsWith( "override-" ) ) )
+                    {
+                        final IdentityChangeRequest updateRequest = new IdentityChangeRequest( );
+                        final IdentityDto identity = new IdentityDto( );
+                        identity.setCustomerId(selectedCustomerId);
+                        final String lastUpdateDate = request.getParameter("last_update_date");
+                        identity.setLastUpdateDate(Timestamp.valueOf(lastUpdateDate));
+                        updateRequest.setIdentity( identity );
+                        final List<String> keys = request.getParameterMap( ).keySet( ).stream( )
+                                .filter( key -> key.startsWith( "override-" ) && !key.endsWith( "-certif" ) )
+                                .map( key -> StringUtils.removeStart( key, "override-" ) ).collect( Collectors.toList( ) );
+                        identity.getAttributes( ).addAll( keys.stream( ).map( key -> {
+                            final String value = request.getParameter( "override-" + key );
+                            final String certif = request.getParameter( "override-" + key + "-certif" );
+                            final String timestamp = request.getParameter( "override-" + key + "-timestamp-certif" );
+
+                            final AttributeDto attributeDto = new AttributeDto( );
+                            attributeDto.setKey( key );
+                            attributeDto.setValue( value );
+                            attributeDto.setCertifier( certif );
+                            attributeDto.setCertificationDate( new Timestamp( Long.parseLong( timestamp ) ) );
+                            return attributeDto;
+                        } ).collect( Collectors.toList( ) ) );
+                        final IdentityChangeResponse response = identityService.updateIdentity( selectedCustomerId, updateRequest,
+                                candidateIdentity.getClientAppCode( ), requestAuthor );
+                        status = response.getStatus( );
+                        header = "Identité sélectionnée et mise à jour.\n\nAPI UPDATE identity";
+                    }
+                    /* No update needed, just get the identity to check if it still exists */
+                    else
+                    {
+                        final IdentitySearchResponse response = identityService.getIdentity( selectedCustomerId, candidateIdentity.getClientAppCode( ),
+                                requestAuthor );
+                        status = response.getStatus( );
+                        header = "Identité sélectionnée.\n\nAPI GET identity";
+                    }
+
                     /* Complete workflow history with custom fields */
                     final CandidateIdentityHistory candidateIdentityHistory = new CandidateIdentityHistory( );
                     candidateIdentityHistory.setWfResourceHistoryId( resourceHistory.getId( ) );
                     candidateIdentityHistory.setStatus( status.getType( ).name( ) );
-                    candidateIdentityHistory.setComment( this.buildHistoryComment( "Identité sélectionnée.\n\nAPI GET identity", status ) );
+                    candidateIdentityHistory.setComment( this.buildHistoryComment(header, status ) );
                     CandidateIdentityHistoryHome.insert( candidateIdentityHistory );
+
                     /* Process response */
-                    if ( ResponseStatusFactory.ok( ).equals( status ) )
+                    if ( status.getType( ) == ResponseStatusType.OK || status.getType( ) == ResponseStatusType.SUCCESS
+                            || status.getType( ) == ResponseStatusType.INCOMPLETE_SUCCESS )
                     {
                         candidateIdentity.setCustomerId( selectedCustomerId );
                         bStatus = true;
                     }
+                    CandidateIdentityHome.update( candidateIdentity );
                 }
-                catch( IdentityStoreException e )
+                catch( final IdentityStoreException e )
                 {
-                    AppLogService
-                            .error( "A problem occurred during creation, candidate identity not imported (id : " + resourceHistory.getIdResource( ) + ")" );
+                    AppLogService.error(
+                            "A problem occurred during identification, candidate identity not identified (id : " + resourceHistory.getIdResource( ) + ")" );
                 }
-
-                CandidateIdentityHome.update( candidateIdentity );
             }
             else
             {
-                AppLogService.error( "A problem occurred during creation, candidate identity not found (id : " + resourceHistory.getIdResource( ) + ")" );
+                AppLogService
+                        .error( "A problem occurred during identification, candidate identity not identified (id : " + resourceHistory.getIdResource( ) + ")" );
             }
         }
         else
         {
-            AppLogService.error( "A problem occurred during creation, no selected customer id (id : " + resourceHistory.getIdResource( ) + ")" );
+            AppLogService.error( "A problem occurred during identification, candidate identity not identified (id " + resourceHistory.getIdResource( ) + ")" );
         }
 
         return bStatus;
