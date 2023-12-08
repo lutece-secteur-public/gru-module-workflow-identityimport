@@ -110,9 +110,9 @@ public class IdentityIdentifyTask extends IdentityTask
                     {
                         final IdentityChangeRequest updateRequest = new IdentityChangeRequest( );
                         final IdentityDto identity = new IdentityDto( );
-                        identity.setCustomerId(selectedCustomerId);
-                        final String lastUpdateDate = request.getParameter("last_update_date");
-                        identity.setLastUpdateDate(Timestamp.valueOf(lastUpdateDate));
+                        identity.setCustomerId( selectedCustomerId );
+                        final String lastUpdateDate = request.getParameter( "last_update_date" );
+                        identity.setLastUpdateDate( Timestamp.valueOf( lastUpdateDate ) );
                         updateRequest.setIdentity( identity );
                         final List<String> keys = request.getParameterMap( ).keySet( ).stream( )
                                 .filter( key -> key.startsWith( "override-" ) && !key.endsWith( "-certif" ) )
@@ -147,7 +147,7 @@ public class IdentityIdentifyTask extends IdentityTask
                     final CandidateIdentityHistory candidateIdentityHistory = new CandidateIdentityHistory( );
                     candidateIdentityHistory.setWfResourceHistoryId( resourceHistory.getId( ) );
                     candidateIdentityHistory.setStatus( status.getType( ).name( ) );
-                    candidateIdentityHistory.setComment( this.buildHistoryComment(header, status ) );
+                    candidateIdentityHistory.setComment( this.buildHistoryComment( header, status ) );
                     CandidateIdentityHistoryHome.insert( candidateIdentityHistory );
 
                     /* Process response */
