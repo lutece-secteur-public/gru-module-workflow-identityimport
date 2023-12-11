@@ -76,6 +76,20 @@
           class="fr.paris.lutece.plugins.workflow.modules.identityimport.web.IdentityIdentifyTaskComponent"
           p:taskType-ref="workflow-identityimport.identityIdentifyTaskType"  />
 
+    <!-- Acrhive Batch -->
+    <bean id="workflow-identityimport.archiveBatchTaskType"
+          class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+          p:key="taskArchiveBatch"
+          p:titleI18nKey="module.workflow.identityimport.archive.title"
+          p:beanName="workflow-identityimport.archiveBatchTask"
+          p:configRequired="false"
+          p:formTaskRequired="false"
+          p:taskForAutomaticAction="false" />
+
+    <bean id="workflow-identityimport.archiveBatchTask"
+          class="fr.paris.lutece.plugins.workflow.modules.identityimport.task.archive.BatchArchiveTask"
+          scope="prototype" />
+
 
 
     <!-- IHttpTransportProvider declarations -->

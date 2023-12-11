@@ -41,18 +41,21 @@ public abstract class IdentityTask extends SimpleTask
     protected String buildHistoryComment( final String header, final ResponseStatus status )
     {
         final StringBuilder message = new StringBuilder( header );
-        if ( status.getMessage( ) != null )
+        if ( status != null )
         {
-            message.append( "\n" ).append( status.getMessage( ) );
-        }
-        if ( status.getAttributeStatuses( ) != null && !status.getAttributeStatuses( ).isEmpty( ) )
-        {
-            message.append( "\n" ).append( "\n" ).append( "Attribute statuses: " ).append( "\n" );
-            status.getAttributeStatuses( ).forEach( attributeStatus -> {
-                message.append( "\n" ).append( attributeStatus.getKey( ) ).append( " - " ).append( attributeStatus.getStatus( ) ).append( " - " )
-                        .append( attributeStatus.getMessage( ) );
+            if ( status.getMessage( ) != null )
+            {
+                message.append( "\n" ).append( status.getMessage( ) );
+            }
+            if ( status.getAttributeStatuses( ) != null && !status.getAttributeStatuses( ).isEmpty( ) )
+            {
+                message.append( "\n" ).append( "\n" ).append( "Attribute statuses: " ).append( "\n" );
+                status.getAttributeStatuses( ).forEach( attributeStatus -> {
+                    message.append( "\n" ).append( attributeStatus.getKey( ) ).append( " - " ).append( attributeStatus.getStatus( ) ).append( " - " )
+                            .append( attributeStatus.getMessage( ) );
 
-            } );
+                } );
+            }
         }
         return message.toString( );
     }
