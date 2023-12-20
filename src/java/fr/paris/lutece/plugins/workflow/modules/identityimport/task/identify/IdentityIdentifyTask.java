@@ -75,7 +75,6 @@ public class IdentityIdentifyTask extends IdentityTask
 
     // Constants
     private static final String TASK_TITLE = "module.workflow.identityimport.identify.title";
-    private static final String TIMESTAMP_FORMAT = "yyyy-mm-dd hh:mm:ss.SSS";
 
     // Services
     private static final IResourceHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
