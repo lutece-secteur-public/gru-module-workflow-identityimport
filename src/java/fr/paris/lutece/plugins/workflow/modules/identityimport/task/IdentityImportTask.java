@@ -46,7 +46,7 @@ import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.common.ResponseStatus
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeRequest;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.dto.crud.IdentityChangeResponse;
 import fr.paris.lutece.plugins.identitystore.v3.web.rs.util.ResponseStatusFactory;
-import fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService;
+import fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityServiceExtended;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.plugins.workflow.modules.identityimport.mapper.IdentityMapper;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
@@ -70,7 +70,7 @@ public class IdentityImportTask extends IdentityTask
     // Services
     private static final IResourceHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
 
-    private final IdentityService identityService = SpringContextService.getBean( "identityService.rest.httpAccess.v3" );
+    private final IdentityServiceExtended identityServiceExtended = SpringContextService.getBean( "identityServiceExtended.rest.httpAccess.v3" );
 
     @Override
     public boolean processTaskWithResult( int nIdResourceHistory, HttpServletRequest request, Locale locale, User user )
@@ -95,7 +95,7 @@ public class IdentityImportTask extends IdentityTask
 
             try
             {
-                final IdentityChangeResponse response = identityService.importIdentity( identityChangeRequest, candidateIdentity.getClientAppCode( ),
+                final IdentityChangeResponse response = identityServiceExtended.importIdentity( identityChangeRequest, candidateIdentity.getClientAppCode( ),
                         requestAuthor );
                 final ResponseStatus status = response.getStatus( );
                 /* Complete workflow history with custom fields */

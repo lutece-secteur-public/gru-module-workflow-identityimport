@@ -105,4 +105,7 @@
     <bean id="identityService.rest.httpAccess.v3" class="fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityService">
         <constructor-arg ref="restTransport.identity.httpAccess"/>
     </bean>
+    <bean id="identityServiceExtended.rest.httpAccess.v3" class="fr.paris.lutece.plugins.identitystore.v3.web.service.IdentityServiceExtended">
+        <constructor-arg ref="restTransport.identity.httpAccess"/>
+    </bean>
 </beans>
