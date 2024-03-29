@@ -51,8 +51,9 @@ public abstract class IdentityTask extends SimpleTask
             {
                 message.append( "\n" ).append( "\n" ).append( "Attribute statuses: " ).append( "\n" );
                 status.getAttributeStatuses( ).forEach( attributeStatus -> {
-                    message.append( "\n" ).append( attributeStatus.getKey( ) ).append( " - " ).append( attributeStatus.getStatus( ) ).append( " - " )
-                            .append( attributeStatus.getMessage( ) );
+                    message.append( "\n" ).append( attributeStatus.getKey( ) ).append( " - " ).append( attributeStatus.getStatus( ) )
+                            .append( ( attributeStatus.getMessage( ) != null ? " - " : "" ) )
+                            .append( ( attributeStatus.getMessage( ) != null ? attributeStatus.getMessage( ) : "" ) );
 
                 } );
             }
