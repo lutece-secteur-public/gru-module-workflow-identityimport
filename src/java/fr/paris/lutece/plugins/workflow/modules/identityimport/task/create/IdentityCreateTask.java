@@ -96,7 +96,7 @@ public class IdentityCreateTask extends IdentityTask
 
             try
             {
-                final IdentityChangeResponse response = identityService.createIdentity( identityChangeRequest, candidateIdentity.getClientAppCode( ),
+                final IdentityChangeResponse response = identityService.createIdentity( identityChangeRequest, candidateIdentity.getClientCode( ),
                         requestAuthor );
                 final ResponseStatus status = response.getStatus( );
                 /* Complete workflow history with custom fields */

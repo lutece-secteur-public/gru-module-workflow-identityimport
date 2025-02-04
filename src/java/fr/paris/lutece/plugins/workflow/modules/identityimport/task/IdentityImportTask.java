@@ -95,7 +95,7 @@ public class IdentityImportTask extends IdentityTask
 
             try
             {
-                final IdentityChangeResponse response = identityServiceExtended.importIdentity( identityChangeRequest, candidateIdentity.getClientAppCode( ),
+                final IdentityChangeResponse response = identityServiceExtended.importIdentity( identityChangeRequest, candidateIdentity.getClientCode( ),
                         requestAuthor );
                 final ResponseStatus status = response.getStatus( );
                 /* Complete workflow history with custom fields */

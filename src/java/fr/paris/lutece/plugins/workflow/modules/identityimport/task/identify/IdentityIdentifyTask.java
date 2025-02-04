@@ -63,8 +63,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -129,14 +127,14 @@ public class IdentityIdentifyTask extends IdentityTask
                             return attributeDto;
                         } ).collect( Collectors.toList( ) ) );
                         final IdentityChangeResponse response = identityService.updateIdentity( selectedCustomerId, updateRequest,
-                                candidateIdentity.getClientAppCode( ), requestAuthor );
+                                candidateIdentity.getClientCode( ), requestAuthor );
                         status = response.getStatus( );
                         header = "Identité sélectionnée et mise à jour.\n\nAPI UPDATE identity";
                     }
                     /* No update needed, just get the identity to check if it still exists */
                     else
                     {
-                        final IdentitySearchResponse response = identityService.getIdentity( selectedCustomerId, candidateIdentity.getClientAppCode( ),
+                        final IdentitySearchResponse response = identityService.getIdentity( selectedCustomerId, candidateIdentity.getClientCode( ),
                                 requestAuthor );
                         status = response.getStatus( );
                         header = "Identité sélectionnée.\n\nAPI GET identity";
