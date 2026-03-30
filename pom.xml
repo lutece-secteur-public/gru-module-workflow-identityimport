@@ -13,9 +13,9 @@
   <url>https://...</url>
  
   <scm>
-    <connection>scm:git:https://...</connection>
-    <developerConnection>scm:git:https://...</developerConnection>
-    <url>https://...</url>
+    <connection>scm:git:https://github.com/lutece-secteur-public/gru-module-workflow-identityimport.git</connection>
+    <developerConnection>scm:git:https://github.com/lutece-secteur-public/gru-module-workflow-identityimport.git</developerConnection>
+    <url>https://github.com/lutece-secteur-public/gru-module-workflow-identityimport.git</url>
   </scm>  
  
   <properties>
